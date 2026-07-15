@@ -18,26 +18,26 @@ class BookingController extends Controller
      */
     public function create(Flight $flight, Request $request)
     {
+        if ($flight->isCompleted()) {
+            return redirect()->route('home')->with('error', 'This flight has already completed.');
+        }
+
         $seatClass = $request->input('class', 'economy');
         $flight->load(['airplane', 'departureAirport', 'arrivalAirport']);
 
         // Fetch all seats configured for this airplane
         $allSeats = Seat::where('airplane_id', $flight->airplane_id)
             ->where('class', $seatClass)
-            ->orderByRaw('CAST(REGEXP_REPLACE(seat_number, "[^0-9]", "") AS UNSIGNED) ASC')
-            ->orderByRaw('REGEXP_REPLACE(seat_number, "[0-9]", "") ASC')
-            ->get();
+            ->get()
+            ->sortBy(function ($seat) {
+                preg_match('/(\d+)([A-Z])/', $seat->seat_number, $matches);
 
-        // If REGEXP_REPLACE is not supported on some MySQL versions, fallback to standard sort
-        if ($allSeats->isEmpty()) {
-            $allSeats = Seat::where('airplane_id', $flight->airplane_id)
-                ->where('class', $seatClass)
-                ->get()
-                ->sortBy(function($seat) {
-                    preg_match('/(\d+)([A-Z])/', $seat->seat_number, $matches);
-                    return isset($matches[1]) ? (int)$matches[1] * 100 + ord($matches[2]) : 0;
-                });
-        }
+                $row = isset($matches[1]) ? (int) $matches[1] : 0;
+                $column = isset($matches[2]) ? ord($matches[2]) : 0;
+
+                return ($row * 100) + $column;
+            })
+            ->values();
 
         // Fetch occupied seats for this flight (bookings NOT cancelled)
         $occupiedSeats = Passenger::whereHas('booking', function ($q) use ($flight) {
@@ -85,6 +85,10 @@ class BookingController extends Controller
             $booking = DB::transaction(function () use ($flightId, $seatClass, $passengersData, $seatNumbers) {
                 // 1. Lock flight row for update to prevent race conditions on seats capacity
                 $flight = Flight::where('id', $flightId)->lockForUpdate()->first();
+
+                if ($flight->isCompleted()) {
+                    throw new \Exception('This flight has already completed.');
+                }
 
                 if ($flight->available_seats < count($passengersData)) {
                     throw new \Exception('Not enough available seats on this flight.');

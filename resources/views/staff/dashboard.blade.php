@@ -117,6 +117,9 @@
                                 <td class="py-4 px-6">
                                     <span class="block text-white font-semibold">{{ date('d M Y', strtotime($flight->departure_time)) }}</span>
                                     <span class="block text-xs text-slate-400 font-mono mt-0.5">{{ date('H:i', strtotime($flight->departure_time)) }}</span>
+                                    <span class="mt-2 inline-flex items-center text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300">
+                                        {{ $flight->statusLabel() }}
+                                    </span>
                                 </td>
                                 <td class="py-4 px-6 text-center">
                                     <span class="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold font-mono rounded-lg text-xs">

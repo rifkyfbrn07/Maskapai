@@ -39,6 +39,7 @@ class FlightCrudController extends Controller
         $airplane = Airplane::findOrFail($request->airplane_id);
 
         Flight::create([
+            'airline_id' => $airplane->airline_id,
             'airplane_id' => $request->airplane_id,
             'flight_number' => strtoupper($request->flight_number),
             'departure_airport_id' => $request->departure_airport_id,
@@ -46,7 +47,7 @@ class FlightCrudController extends Controller
             'departure_time' => $request->departure_time,
             'arrival_time' => $request->arrival_time,
             'price' => $request->price,
-            'available_seats' => $airplane->capacity, // Default available seats to total airplane capacity
+            'available_seats' => $airplane->capacity,
         ]);
 
         return redirect()->route('flights.index')->with('success', 'Flight scheduled successfully.');
@@ -81,6 +82,7 @@ class FlightCrudController extends Controller
         }
 
         $flight->update([
+            'airline_id' => $airplane->airline_id,
             'airplane_id' => $request->airplane_id,
             'flight_number' => strtoupper($request->flight_number),
             'departure_airport_id' => $request->departure_airport_id,

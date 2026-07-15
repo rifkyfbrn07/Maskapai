@@ -53,6 +53,9 @@
                                 <td class="py-4 px-6">
                                     <span class="block text-white font-semibold">{{ date('d M Y', strtotime($flight->departure_time)) }}</span>
                                     <span class="block text-xs text-slate-400 font-mono mt-0.5">{{ date('H:i', strtotime($flight->departure_time)) }} - {{ date('H:i', strtotime($flight->arrival_time)) }}</span>
+                                    <span class="mt-2 inline-flex items-center text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full {{ $flight->isCompleted() ? 'bg-slate-500/15 text-slate-300' : 'bg-cyan-500/15 text-cyan-300' }}">
+                                        {{ $flight->statusLabel() }}
+                                    </span>
                                 </td>
                                 <td class="py-4 px-6 font-bold text-cyan-400 font-mono">IDR {{ number_format($flight->price, 0, ',', '.') }}</td>
                                 <td class="py-4 px-6">

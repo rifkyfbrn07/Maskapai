@@ -57,6 +57,17 @@
                 @enderror
             </div>
 
+            <!-- Registration Number -->
+            <div>
+                <label for="registration_number" class="block text-sm font-semibold text-slate-300 mb-2">Registration Number</label>
+                <input type="text" name="registration_number" id="registration_number" value="{{ old('registration_number') }}"
+                    class="block w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 transition"
+                    placeholder="PK-XYZ-2026">
+                @error('registration_number')
+                    <p class="mt-2 text-xs text-red-400 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Capacity -->
             <div>
                 <label for="capacity" class="block text-sm font-semibold text-slate-300 mb-2">Capacity (Total Seats)</label>

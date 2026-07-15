@@ -168,6 +168,22 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
+            // If email verification is required and user is not verified, generate and send OTP then redirect
+            $verificationRequired = env('EMAIL_VERIFICATION_REQUIRED', true);
+            if ($verificationRequired && !$user->email_verified_at && $user->role === 'customer') {
+                $otp = rand(100000, 999999);
+                $user->verification_code = $otp;
+                $user->save();
+
+                try {
+                    Mail::to($user->email)->send(new MailOtp($otp));
+                } catch (\Exception $e) {
+                    logger()->error('SMTP failed while sending login OTP: ' . $e->getMessage());
+                }
+
+                return redirect()->intended(route('verification.notice'))->with('success', 'A verification code has been sent to your email.');
+            }
+
             return redirect()->intended($this->getRedirectPath($user));
         }
 

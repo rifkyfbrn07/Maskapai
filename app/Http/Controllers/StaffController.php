@@ -15,6 +15,7 @@ class StaffController extends Controller
     public function index()
     {
         $flights = Flight::with(['airplane.airline', 'departureAirport', 'arrivalAirport'])
+            ->where('arrival_time', '>=', now())
             ->withCount(['bookings as active_bookings_count' => function ($q) {
                 $q->where('status', '!=', 'cancelled');
             }])

@@ -105,12 +105,12 @@
                                         <span>My Tickets</span>
                                     </a>
                                 @endif
-                                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex items-center space-x-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition">
-                                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                                    <span>Logout</span>
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                <form action="{{ route('logout') }}" method="POST" class="block">
                                     @csrf
+                                    <button type="submit" class="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition text-left">
+                                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                                        <span>Logout</span>
+                                    </button>
                                 </form>
                             </div>
                         </div>

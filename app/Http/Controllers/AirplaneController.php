@@ -26,12 +26,14 @@ class AirplaneController extends Controller
         $request->validate([
             'airline_id' => 'required|exists:airlines,id',
             'model' => 'required|string|max:255',
+            'registration_number' => 'nullable|string|max:30',
             'capacity' => 'required|integer|min:10|max:500',
         ]);
 
         $airplane = Airplane::create([
             'airline_id' => $request->airline_id,
             'model' => $request->model,
+            'registration_number' => $request->input('registration_number'),
             'capacity' => $request->capacity,
         ]);
 
@@ -81,13 +83,20 @@ class AirplaneController extends Controller
         $request->validate([
             'airline_id' => 'required|exists:airlines,id',
             'model' => 'required|string|max:255',
+            'registration_number' => 'nullable|string|max:30',
             // Capacity editing is restricted because it affects seats structure
         ]);
 
-        $airplane->update([
+        $data = [
             'airline_id' => $request->airline_id,
             'model' => $request->model,
-        ]);
+        ];
+
+        if ($request->filled('registration_number')) {
+            $data['registration_number'] = $request->registration_number;
+        }
+
+        $airplane->update($data);
 
         return redirect()->route('airplanes.index')->with('success', 'Airplane details updated successfully.');
     }

@@ -44,6 +44,7 @@ class FlightController extends Controller
         $query = Flight::with(['airplane.airline', 'departureAirport', 'arrivalAirport'])
             ->where('departure_airport_id', $fromId)
             ->where('arrival_airport_id', $toId)
+            ->where('arrival_time', '>=', now())
             ->whereBetween('departure_time', [$startOfDay, $endOfDay]);
 
         // Apply filters
