@@ -7,14 +7,14 @@
 
 ## Konfigurasi pertama kali
 
-1. Salin konfigurasi Docker dan buat application key:
+1. Buat konfigurasi Docker, application key, dan password MySQL secara otomatis:
 
-   ```powershell
-   Copy-Item .env.docker.example .env
-   docker run --rm php:8.3-cli php -r 'echo "base64:".base64_encode(random_bytes(32)).PHP_EOL;'
+   ```bash
+   chmod +x scripts/bootstrap.sh
+   ./scripts/bootstrap.sh
    ```
 
-2. Salin nilai `base64:...` yang dihasilkan ke `APP_KEY` dalam `.env`, lalu ganti `MYSQL_PASSWORD` dan `MYSQL_ROOT_PASSWORD` dengan password berbeda yang kuat.
+2. Bila memakai Midtrans asli, isi `MIDTRANS_CLIENT_KEY` dan `MIDTRANS_SERVER_KEY` dengan Sandbox Access Keys dari dashboard Midtrans. Untuk demo lokal/UKK, biarkan kosong dan gunakan Local Simulator.
 
 3. Build dan jalankan seluruh lima container:
 

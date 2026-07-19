@@ -5,9 +5,8 @@ FROM node:22-bookworm-slim AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
-COPY resources ./resources
-COPY public ./public
-COPY vite.config.js ./
+# Tailwind scans Blade templates while generating the production stylesheet.
+COPY . .
 RUN npm run build
 
 # Install PHP dependencies separately for a reproducible production build.
@@ -33,6 +32,7 @@ RUN apt-get update \
 
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY --from=dependencies /usr/bin/composer /usr/bin/composer
 COPY --from=dependencies /app/vendor ./vendor
 COPY . .
 COPY --from=frontend /app/public/build ./public/build
